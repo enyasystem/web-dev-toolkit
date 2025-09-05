@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS Minifier - Web Dev Toolkit</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: #2c3e50;
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .main-content {
+            padding: 40px;
+        }
+        
+        .tool-section {
+            margin-bottom: 30px;
+        }
+        
+        .section-title {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 5px;
+        }
+        
+        textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 20px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            resize: vertical;
+            transition: border-color 0.3s;
+        }
+        
+        textarea:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+        }
+        
+        .btn-clear {
+            background: #e74c3c;
+        }
+        
+        .btn-clear:hover {
+            background: #c0392b;
+        }
+        
+        .btn-copy {
+            background: #27ae60;
+        }
+        
+        .btn-copy:hover {
+            background: #219a52;
+        }
+        
+        .stats {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #3498db;
+        }
+        
+        .stat-label {
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #3498db;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🗜️ CSS Minifier</h1>
+            <p>Compress your CSS for better performance</p>
+        </div>
+        
+        <div class="main-content">
+            <div class="tool-section">
+                <h3 class="section-title">Input CSS</h3>
+                <textarea id="inputCss" placeholder="Paste your CSS code here...
+
+/* Example CSS */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #ffffff;
+}
+
+.header {
+    font-size: 24px;
+    color: #333333;
+    text-align: center;
+}"></textarea>
+                
+                <div class="button-group">
+                    <button class="btn" onclick="minifyCss()">🗜️ Minify CSS</button>
+                    <button class="btn btn-clear" onclick="clearAll()">🗑️ Clear All</button>
+                    <button class="btn btn-copy" onclick="copyResult()">📋 Copy Result</button>
+                </div>
+            </div>
+            
+            <div class="stats" id="stats" style="display: none;">
+                <div class="stat-item">
+                    <div class="stat-number" id="originalSize">0</div>
+                    <div class="stat-label">Original Size (bytes)</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="minifiedSize">0</div>
+                    <div class="stat-label">Minified Size (bytes)</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="savings">0%</div>
+                    <div class="stat-label">Size Reduction</div>
+                </div>
+            </div>
+            
+            <div class="tool-section">
+                <h3 class="section-title">Minified CSS</h3>
+                <textarea id="outputCss" readonly placeholder="Minified CSS will appear here..."></textarea>
+            </div>
+            
+            <a href="../index.html" class="back-link">← Back to Toolkit</a>
+        </div>
+    </div>
+
+    <script>
+        function minifyCss() {
+            const input = document.getElementById('inputCss').value;
+            
+            if (!input.trim()) {
+                alert('Please enter some CSS code to minify!');
+                return;
+            }
+            
+            // Simple CSS minification
+            let minified = input
+                // Remove comments
+                .replace(/\/\*[\s\S]*?\*\//g, '')
+                // Remove extra whitespace and newlines
+                .replace(/\s+/g, ' ')
+                // Remove spaces around specific characters
+                .replace(/\s*{\s*/g, '{')
+                .replace(/\s*}\s*/g, '}')
+                .replace(/\s*:\s*/g, ':')
+                .replace(/\s*;\s*/g, ';')
+                .replace(/\s*,\s*/g, ',')
+                // Remove trailing semicolon before }
+                .replace(/;}/g, '}')
+                // Remove leading and trailing spaces
+                .trim();
+            
+            document.getElementById('outputCss').value = minified;
+            
+            // Update stats
+            const originalSize = new Blob([input]).size;
+            const minifiedSize = new Blob([minified]).size;
+            const savings = Math.round(((originalSize - minifiedSize) / originalSize) * 100);
+            
+            document.getElementById('originalSize').textContent = originalSize;
+            document.getElementById('minifiedSize').textContent = minifiedSize;
+            document.getElementById('savings').textContent = savings + '%';
+            document.getElementById('stats').style.display = 'block';
+        }
+        
+        function clearAll() {
+            document.getElementById('inputCss').value = '';
+            document.getElementById('outputCss').value = '';
+            document.getElementById('stats').style.display = 'none';
+        }
+        
+        function copyResult() {
+            const output = document.getElementById('outputCss');
+            if (!output.value) {
+                alert('No minified CSS to copy! Please minify some CSS first.');
+                return;
+            }
+            
+            output.select();
+            document.execCommand('copy');
+            
+            // Show feedback
+            const btn = event.target;
+            const originalText = btn.textContent;
+            btn.textContent = '✅ Copied!';
+            setTimeout(() => {
+                btn.textContent = originalText;
+            }, 2000);
+        }
+        
+        // Allow tab key in textarea
+        document.getElementById('inputCss').addEventListener('keydown', function(e) {
+            if (e.key === 'Tab') {
+                e.preventDefault();
+                const start = this.selectionStart;
+                const end = this.selectionEnd;
+                this.value = this.value.substring(0, start) + '\t' + this.value.substring(end);
+                this.selectionStart = this.selectionEnd = start + 1;
+            }
+        });
+    </script>
+</body>
+</html>
