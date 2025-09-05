@@ -19,16 +19,16 @@
     "utilities",
     "toolkit"
   ],
-  "author": "Your Name",
+  "author": "Enya Elvis",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/web-dev-toolkit.git"
+    "url": "https://github.com/enyasystem/web-dev-toolkit.git"
   },
   "bugs": {
-    "url": "https://github.com/yourusername/web-dev-toolkit/issues"
+    "url": "https://github.com/enyasystem/web-dev-toolkit/issues"
   },
-  "homepage": "https://github.com/yourusername/web-dev-toolkit#readme",
+  "homepage": "https://github.com/enyasystem/web-dev-toolkit#readme",
   "devDependencies": {
     "http-server": "^14.1.1",
     "live-server": "^1.2.2"
