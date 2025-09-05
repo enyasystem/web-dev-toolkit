@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript Formatter - Web Dev Toolkit</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: #2d3436;
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .main-content {
+            padding: 40px;
+        }
+        
+        .editor-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .editor-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .editor-header {
+            background: #495057;
+            color: white;
+            padding: 15px 20px;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .line-numbers {
+            color: #6c757d;
+            font-size: 12px;
+        }
+        
+        textarea {
+            width: 100%;
+            height: 400px;
+            padding: 20px;
+            border: none;
+            font-family: 'Courier New', Monaco, monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            resize: none;
+            background: #ffffff;
+            color: #2d3436;
+        }
+        
+        textarea:focus {
+            outline: none;
+            background: #fff;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .btn {
+            background: #74b9ff;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn:hover {
+            background: #0984e3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(116, 185, 255, 0.4);
+        }
+        
+        .btn-minify {
+            background: #00b894;
+        }
+        
+        .btn-minify:hover {
+            background: #00a085;
+        }
+        
+        .btn-clear {
+            background: #fd79a8;
+        }
+        
+        .btn-clear:hover {
+            background: #e84393;
+        }
+        
+        .btn-copy {
+            background: #fdcb6e;
+        }
+        
+        .btn-copy:hover {
+            background: #f39c12;
+        }
+        
+        .options {
+            background: #f1f2f6;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .options h3 {
+            margin-bottom: 15px;
+            color: #2d3436;
+        }
+        
+        .option-group {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .checkbox-group input[type="checkbox"] {
+            transform: scale(1.2);
+        }
+        
+        .stats {
+            background: #dfe6e9;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #74b9ff;
+        }
+        
+        .stat-label {
+            color: #636e72;
+            margin-top: 5px;
+            font-size: 14px;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #74b9ff;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        
+        @media (max-width: 768px) {
+            .editor-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+   <div class="container">
+       <div class="header">
+           <h1>⚡ JavaScript Formatter</h1>
+           <p>Beautify and format your JavaScript code</p>
+       </div>
+       
+       <div class="main-content">
+           <div class="options">
+               <h3>Formatting Options</h3>
+               <div class="option-group">
+                   <div class="checkbox-group">
+                       <input type="checkbox" id="indentWith" checked>
+                       <label for="indentWith">Use 2-space indentation</label>
+                   </div>
+                   <div class="checkbox-group">
+                       <input type="checkbox" id="insertBraces" checked>
+                       <label for="insertBraces">Insert missing braces</label>
+                   </div>
+                   <div class="checkbox-group">
+                       <input type="checkbox" id="insertSemicolon" checked>
+                       <label for="insertSemicolon">Insert missing semicolons</label>
+                   </div>
+                   <div class="checkbox-group">
+                       <input type="checkbox" id="removeComments">
+                       <label for="removeComments">Remove comments</label>
+                   </div>
+               </div>
+           </div>
+           
+           <div class="controls">
+               <button class="btn" onclick="formatCode()">
+                   ✨ Format Code
+               </button>
+               <button class="btn btn-minify" onclick="minifyCode()">
+                   🗜️ Minify Code
+               </button>
+               <button class="btn btn-copy" onclick="copyFormatted()">
+                   📋 Copy Result
+               </button>
+               <button class="btn btn-clear" onclick="clearAll()">
+                   🗑️ Clear All
+               </button>
+           </div>
+           
+           <div class="editor-container">
+               <div class="editor-section">
+                   <div class="editor-header">
+                       <span>Input JavaScript</span>
+                       <span class="line-numbers" id="inputLines">Lines: 1</span>
+                   </div>
+                   <textarea 
+                       id="inputCode" 
+                       placeholder="Paste your JavaScript code here...
+
+// Example JavaScript
+function calculateSum(a,b){
+if(typeof a!=='number'||typeof b!=='number'){
+throw new Error('Invalid input');
+}
+return a+b;
+}
+
+const numbers=[1,2,3,4,5];
+const sum=numbers.reduce((acc,num)=>acc+num,0);
+console.log('Sum:',sum);"
+                       oninput="updateLineCount('input')"
+                   ></textarea>
+               </div>
+               
+               <div class="editor-section">
+                   <div class="editor-header">
+                       <span>Formatted JavaScript</span>
+                       <span class="line-numbers" id="outputLines">Lines: 0</span>
+                   </div>
+                   <textarea 
+                       id="outputCode" 
+                       readonly 
+                       placeholder="Formatted JavaScript will appear here..."
+                   ></textarea>
+               </div>
+           </div>
+           
+           <div class="stats" id="stats" style="display: none;">
+               <div class="stat-item">
+                   <div class="stat-number" id="originalChars">0</div>
+                   <div class="stat-label">Original Characters</div>
+               </div>
+               <div class="stat-item">
+                   <div class="stat-number" id="formattedChars">0</div>
+                   <div class="stat-label">Formatted Characters</div>
+               </div>
+               <div class="stat-item">
+                   <div class="stat-number" id="originalLines">0</div>
+                   <div class="stat-label">Original Lines</div>
+               </div>
+               <div class="stat-item">
+                   <div class="stat-number" id="formattedLines">0</div>
+                   <div class="stat-label">Formatted Lines</div>
+               </div>
+           </div>
+           
+           <a href="../index.html" class="back-link">← Back to Toolkit</a>
+       </div>
+   </div>
+
+   <script>
+       function formatCode() {
+           const input = document.getElementById('inputCode').value;
+           
+           if (!input.trim()) {
+               alert('Please enter some JavaScript code to format!');
+               return;
+           }
+           
+           let formatted = input;
+           
+           // Basic JavaScript formatting
+           try {
+               // Remove extra whitespace
+               formatted = formatted.replace(/\s+/g, ' ').trim();
+               
+               // Format braces and parentheses
+               formatted = formatted.replace(/\s*{\s*/g, ' {\n');
+               formatted = formatted.replace(/\s*}\s*/g, '\n}\n');
+               formatted = formatted.replace(/;\s*/g, ';\n');
+               formatted = formatted.replace(/,\s*/g, ', ');
+               
+               // Format operators
+               formatted = formatted.replace(/\s*([+\-*/%=<>!&|]+)\s*/g, ' $1 ');
+               formatted = formatted.replace(/\s+([+\-*/%=<>!&|]+)\s+/g, ' $1 ');
+               
+               // Format parentheses
+               formatted = formatted.replace(/\s*\(\s*/g, '(');
+               formatted = formatted.replace(/\s*\)\s*/g, ')');
+               
+               // Format square brackets
+               formatted = formatted.replace(/\s*\[\s*/g, '[');
+               formatted = formatted.replace(/\s*\]\s*/g, ']');
+               
+               // Handle function declarations
+               formatted = formatted.replace(/function\s*\(/g, 'function (');
+               formatted = formatted.replace(/\)\s*{/g, ') {');
+               
+               // Handle if/for/while statements
+               formatted = formatted.replace(/(if|for|while|switch)\s*\(/g, '$1 (');
+               
+               // Add proper indentation
+               const lines = formatted.split('\n');
+               let indentLevel = 0;
+               const indentSize = document.getElementById('indentWith').checked ? 2 : 4;
+               const indent = ' '.repeat(indentSize);
+               
+               formatted = lines.map(line => {
+                   line = line.trim();
+                   
+                   if (line.includes('}')) {
+                       indentLevel = Math.max(0, indentLevel - 1);
+                   }
+                   
+                   const indentedLine = line ? indent.repeat(indentLevel) + line : '';
+                   
+                   if (line.includes('{')) {
+                       indentLevel++;
+                   }
+                   
+                   return indentedLine;
+               }).filter(line => line.trim() !== '').join('\n');
+               
+               // Handle missing semicolons
+               if (document.getElementById('insertSemicolon').checked) {
+                   formatted = formatted.replace(/([^;\s{}])\s*\n/g, '$1;\n');
+               }
+               
+               // Remove comments if requested
+               if (document.getElementById('removeComments').checked) {
+                   formatted = formatted.replace(/\/\*[\s\S]*?\*\//g, '');
+                   formatted = formatted.replace(/\/\/.*$/gm, '');
+               }
+               
+               // Clean up extra newlines
+               formatted = formatted.replace(/\n\s*\n\s*\n/g, '\n\n');
+               formatted = formatted.trim();
+               
+           } catch (error) {
+               alert('Error formatting code: ' + error.message);
+               return;
+           }
+           
+           document.getElementById('outputCode').value = formatted;
+           updateLineCount('output');
+           updateStats(input, formatted);
+       }
+       
+       function minifyCode() {
+           const input = document.getElementById('inputCode').value;
+           
+           if (!input.trim()) {
+               alert('Please enter some JavaScript code to minify!');
+               return;
+           }
+           
+           let minified = input;
+           
+           try {
+               // Remove comments
+               minified = minified.replace(/\/\*[\s\S]*?\*\//g, '');
+               minified = minified.replace(/\/\/.*$/gm, '');
+               
+               // Remove extra whitespace
+               minified = minified.replace(/\s+/g, ' ');
+               
+               // Remove spaces around operators and punctuation
+               minified = minified.replace(/\s*([{}();,:])\s*/g, '$1');
+               minified = minified.replace(/\s*([+\-*/%=<>!&|]+)\s*/g, '$1');
+               
+               // Remove spaces around parentheses and brackets
+               minified = minified.replace(/\s*\(\s*/g, '(');
+               minified = minified.replace(/\s*\)\s*/g, ')');
+               minified = minified.replace(/\s*\[\s*/g, '[');
+               minified = minified.replace(/\s*\]\s*/g, ']');
+               
+               minified = minified.trim();
+               
+           } catch (error) {
+               alert('Error minifying code: ' + error.message);
+               return;
+           }
+           
+           document.getElementById('outputCode').value = minified;
+           updateLineCount('output');
+           updateStats(input, minified);
+       }
+       
+       function copyFormatted() {
+           const output = document.getElementById('outputCode');
+           
+           if (!output.value) {
+               alert('No formatted code to copy! Please format some JavaScript first.');
+               return;
+           }
+           
+           output.select();
+           document.execCommand('copy');
+           
+           // Show feedback
+           const btn = event.target;
+           const originalText = btn.innerHTML;
+           btn.innerHTML = '✅ Copied!';
+           setTimeout(() => {
+               btn.innerHTML = originalText;
+           }, 2000);
+       }
+       
+       function clearAll() {
+           document.getElementById('inputCode').value = '';
+           document.getElementById('outputCode').value = '';
+           updateLineCount('input');
+           updateLineCount('output');
+           document.getElementById('stats').style.display = 'none';
+       }
+       
+       function updateLineCount(type) {
+           const textarea = document.getElementById(type + 'Code');
+           const counter = document.getElementById(type + 'Lines');
+           const lines = textarea.value.split('\n').length;
+           counter.textContent = `Lines: ${lines}`;
+       }
+       
+       function updateStats(original, formatted) {
+           document.getElementById('originalChars').textContent = original.length;
+           document.getElementById('formattedChars').textContent = formatted.length;
+           document.getElementById('originalLines').textContent = original.split('\n').length;
+           document.getElementById('formattedLines').textContent = formatted.split('\n').length;
+           document.getElementById('stats').style.display = 'block';
+       }
+       
+       // Allow tab key in textareas
+       document.getElementById('inputCode').addEventListener('keydown', function(e) {
+           if (e.key === 'Tab') {
+               e.preventDefault();
+               const start = this.selectionStart;
+               const end = this.selectionEnd;
+               this.value = this.value.substring(0, start) + '  ' + this.value.substring(end);
+               this.selectionStart = this.selectionEnd = start + 2;
+           }
+       });
+       
+       // Auto-format on Ctrl+Shift+F
+       document.addEventListener('keydown', function(e) {
+           if (e.ctrlKey && e.shiftKey && e.key === 'F') {
+               e.preventDefault();
+               formatCode();
+           }
+       });
+       
+       // Initialize line count
+       updateLineCount('input');
+       updateLineCount('output');
+   </script>
+</body>
+</html>
