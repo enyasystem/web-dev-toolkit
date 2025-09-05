@@ -4,3 +4,4 @@ Essential tools and resources for web developers
 fixes #4
 # fixes #5
 The issue was resolved
+# fix 8
