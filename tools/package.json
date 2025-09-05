@@ -1,1 +1,39 @@
 
+{
+  "name": "web-dev-toolkit",
+  "version": "1.0.0",
+  "description": "Essential tools and utilities for web developers",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx http-server . -p 3000 -o",
+    "build": "echo 'No build process needed - static files'",
+    "test": "echo 'Tests coming soon'",
+    "dev": "npx live-server ."
+  },
+  "keywords": [
+    "web-development",
+    "developer-tools",
+    "html-validator",
+    "css-minifier",
+    "javascript-formatter",
+    "utilities",
+    "toolkit"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/web-dev-toolkit.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/web-dev-toolkit/issues"
+  },
+  "homepage": "https://github.com/yourusername/web-dev-toolkit#readme",
+  "devDependencies": {
+    "http-server": "^14.1.1",
+    "live-server": "^1.2.2"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
